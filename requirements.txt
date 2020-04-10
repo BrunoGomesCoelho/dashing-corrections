@@ -1,2 +1,3 @@
 nbconvert
 dash==1.10.0
+dash_dangerously_set_inner_html
