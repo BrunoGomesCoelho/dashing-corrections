@@ -1,0 +1,2 @@
+nbconvert
+dash==1.10.0
