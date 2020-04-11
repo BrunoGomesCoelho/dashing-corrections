@@ -10,8 +10,10 @@ from pathlib import Path
 IDX = None 
 names = []
 html_content = []
+all_files = [x for x in Path(".").iterdir() if x.is_dir()]
+all_files.sort()
 
-for folder in [x for x in Path(".").iterdir() if x.is_dir()]:
+for folder in all_files:
     f = list(folder.iterdir())[0]
     base_name, extension = str(f).split(".")
 
