@@ -7,35 +7,54 @@ from dash.dependencies import Input, State, Output
 from pathlib import Path
 
 
-IDX = None 
+IDX = None
 names = []
 html_content = []
 all_files = [x for x in Path(".").iterdir() if x.is_dir()]
 all_files.sort()
 
+
+def print_error(student, msg):
+    print(f"Student {student}: {msg}")
+
+
 for folder in all_files:
-    f = list(folder.iterdir())[0]
-    base_name, extension = str(f).split(".")
+    # TODO: This assumes the students only submit 1 file as a JN, which is
+    # frequently not the case
+    for f in list(folder.iterdir()):
+        splits = str(f).split(".")
 
-    if extension not in ["html", "ipynb"]:
-        print(f"WRONG FORMAT {extension} for {base_name}")
-        continue
+        # Students make dumb mistakes/send unexpected files
+        if len(splits) > 2:
+            print_error(folder, "file with more than one '.' in it 🤷")
+            continue
+        elif len(splits) < 2:
+            print_error(folder, "file with no dots? 🤔")
+            continue
+        else:
+            base_name, extension = splits
 
-    if extension == "ipynb":
-        cmd = f"jupyter nbconvert '{str(f)}'"
-        os.system(cmd)
-    output_name = base_name + ".html"
+        # We only process ipynb but since we may run the same code more than once,
+        # we also allow the already processed html files
+        if extension not in ["html", "ipynb"]:
+            print(f"WRONG FORMAT {extension} for {base_name}")
+            continue
 
-    with open(output_name, "r") as f:
-        html_content.append(f.read())
-    names.append(str(f.name))
+        # Convert and save file
+        if extension == "ipynb":
+            cmd = f"jupyter nbconvert '{str(f)}'"
+            os.system(cmd)
+        output_name = base_name + ".html"
 
+        with open(output_name, "r") as f:
+            html_content.append(f.read())
+        names.append(str(f.name))
+
+# Save a log of processed files
 with open("processed.txt", "w") as f:
     f.write("\n".join(names))
 
-
 app = dash.Dash('')
-
 app.scripts.config.serve_locally = True
 
 app.layout = html.Div([
@@ -49,6 +68,9 @@ app.layout = html.Div([
                Output('name', 'children')],
               [Input('button', 'n_clicks')])
 def update_output(n_clicks):
+    """ Processes the various student files.
+    There is certainly a more elogant way of doing it than a global IDX :)
+    """
     global IDX, names
     if n_clicks is None:
         IDX = 0
@@ -61,7 +83,6 @@ def update_output(n_clicks):
     content = html_content[IDX]
     IDX += 1
     return dash_dangerously_set_inner_html.DangerouslySetInnerHTML(content), name
-
 
 
 if __name__ == '__main__':
