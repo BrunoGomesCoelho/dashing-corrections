@@ -42,7 +42,7 @@ for folder in all_files:
 
         # Convert and save file
         if extension == "ipynb":
-            cmd = f"jupyter nbconvert '{str(f)}'"
+            cmd = f"jupyter nbconvert --to html '{str(f)}'"
             os.system(cmd)
         output_name = base_name + ".html"
 
