@@ -46,9 +46,12 @@ for folder in all_files:
             os.system(cmd)
         output_name = base_name + ".html"
 
-        with open(output_name, "r") as f:
-            html_content.append(f.read())
-        names.append(str(f.name))
+        try:
+            with open(output_name, "r") as f:
+                html_content.append(f.read())
+                names.append(str(f.name))
+        except:
+            print(f"ERROR with {str(f)} - {output_name} - Not a notebook?")
 
 # Save a log of processed files
 with open("processed.txt", "w") as f:
