@@ -1,6 +1,12 @@
 nbconvert
+jupyter_contrib_nbextensions
 dash==1.10.0
 dash_dangerously_set_inner_html
+itsdangerous==2.0.1
 werkzeug==1.0.0
+
 # https://stackoverflow.com/questions/71718167/importerror-cannot-import-name-escape-from-jinja2
 jinja2<3.1.0
+
+# https://stackoverflow.com/questions/76893872/modulenotfounderror-no-module-named-notebook-base-when-installing-nbextension
+notebook==6.4.12 
